@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# PRScope local data
+*.db
+*.sqlite3
+backend/prscope_data/
+data/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.local
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Demo scratch
+sample_repos/_generated/
