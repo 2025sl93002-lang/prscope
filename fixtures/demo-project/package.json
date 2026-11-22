@@ -1,0 +1,26 @@
+{
+  "name": "deplens-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A fixture npm project used to demonstrate the DepLens analysis engine. Versions are pinned to older releases on purpose so that update, security, license and usage analysis have something real to report. This is NOT a real application.",
+  "license": "MIT",
+  "author": "The DepLens Authors",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "rimraf dist && node scripts/build.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "chalk": "2.4.2",
+    "express": "4.17.1",
+    "lodash": "4.17.11",
+    "minimist": "1.2.0",
+    "moment": "2.24.0",
+    "node-fetch": "2.6.0"
+  },
+  "devDependencies": {
+    "rimraf": "2.6.3",
+    "semver": "5.7.0"
+  }
+}

@@ -1,33 +1,43 @@
-# Python
+# --- Python ---
 __pycache__/
-*.py[cod]
-*.egg-info/
+*.pyc
+*.pyo
 .venv/
 venv/
-.env
+*.egg-info/
+.eggs/
+build/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
-htmlcov/
 .coverage
+htmlcov/
 
-# PRScope local data
+# --- Node ---
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- SQLite ---
 *.db
 *.sqlite3
-backend/prscope_data/
-data/
+deplens.db
 
-# Node / frontend
-node_modules/
-frontend/dist/
-frontend/coverage/
-*.local
-
-# Editor / OS
+# --- OS ---
 .DS_Store
-.idea/
+Thumbs.db
+
+# --- Editors ---
 .vscode/
+.idea/
 *.swp
 
-# Demo scratch
-sample_repos/_generated/
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+
+# Note: fixtures/ is intentionally tracked and must NOT be ignored.
