@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements-dev.txt
+
+      - name: Lint (ruff)
+        continue-on-error: false
+        run: ruff check backend/deplens
+
+      - name: Test (pytest)
+        continue-on-error: false
+        working-directory: backend
+        run: python -m pytest
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Lint
+        continue-on-error: false
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Type check
+        continue-on-error: false
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Test
+        continue-on-error: false
+        working-directory: frontend
+        run: npm test
+
+      - name: Build
+        continue-on-error: false
+        working-directory: frontend
+        run: npm run build

@@ -1,50 +1,66 @@
-"""Shared pytest fixtures. SPDX-License-Identifier: MIT
+"""Shared pytest fixtures for the DepLens backend test suite.
 
-A temporary data directory and a freshly-built demo repository are created once
-per test session so tests exercise the *real* analysis engine deterministically.
+All tests run offline and deterministically — no network calls. Online analysis
+(registry/OSV) is exercised separately via crafted inputs, not live services.
 """
+
 from __future__ import annotations
 
-import os
-import tempfile
 from pathlib import Path
 
 import pytest
 
-# Point PRScope at an isolated temp data dir BEFORE importing the app/config.
-_TMP = tempfile.mkdtemp(prefix="prscope_tests_")
-os.environ["PRSCOPE_DATA_DIR"] = _TMP
+from deplens.db import Database, set_db
 
-from fastapi.testclient import TestClient  # noqa: E402
-
-from prscope import config, db  # noqa: E402
-from prscope.main import app  # noqa: E402
-from prscope.services import demo_builder  # noqa: E402
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEMO_PROJECT = REPO_ROOT / "fixtures" / "demo-project"
 
 
-@pytest.fixture(scope="session")
-def demo_repo() -> Path:
-    return demo_builder.build_demo_repo(Path(_TMP) / "demo_repo", force=True)
+@pytest.fixture
+def db() -> Database:
+    database = Database(":memory:")
+    set_db(database)
+    yield database
+    database.close()
 
 
-@pytest.fixture()
-def fresh_db(tmp_path, monkeypatch):
-    """A clean database per test."""
-    db_path = tmp_path / "test.db"
-    monkeypatch.setattr(config, "DB_PATH", db_path)
-    db.init_db(db_path)
-    return db_path
+@pytest.fixture
+def demo_project() -> Path:
+    assert DEMO_PROJECT.is_dir(), "demo fixture is missing"
+    return DEMO_PROJECT
 
 
-@pytest.fixture()
-def client():
-    with TestClient(app) as c:
-        yield c
-
-
-@pytest.fixture()
-def analyzed_demo(client, demo_repo):
-    """Run the demo analysis via the API and return (analysis_id, client)."""
-    resp = client.post("/api/demo/setup", params={"force": True})
-    assert resp.status_code == 200, resp.text
-    return resp.json()["analysis_id"], client
+@pytest.fixture
+def tmp_npm_project(tmp_path: Path) -> Path:
+    """A minimal npm project with a lockfile and source for usage analysis."""
+    (tmp_path / "package.json").write_text(
+        """
+        {
+          "name": "tmp-app", "version": "1.0.0",
+          "dependencies": {"lodash": "^4.0.0", "unused-pkg": "^1.0.0"},
+          "devDependencies": {"rimraf": "^3.0.0"},
+          "scripts": {"clean": "rimraf dist"}
+        }
+        """
+    )
+    (tmp_path / "package-lock.json").write_text(
+        """
+        {
+          "name": "tmp-app", "version": "1.0.0", "lockfileVersion": 3,
+          "packages": {
+            "": {"name": "tmp-app", "version": "1.0.0",
+                 "dependencies": {"lodash": "^4.0.0", "unused-pkg": "^1.0.0"},
+                 "devDependencies": {"rimraf": "^3.0.0"}},
+            "node_modules/lodash": {"version": "4.17.21", "license": "MIT"},
+            "node_modules/unused-pkg": {"version": "1.2.0", "license": "MIT"},
+            "node_modules/rimraf": {"version": "3.0.2", "dev": true, "license": "ISC",
+                                    "dependencies": {"glob": "^7.0.0"}},
+            "node_modules/glob": {"version": "7.2.3", "dev": true, "license": "ISC"}
+          }
+        }
+        """
+    )
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "index.js").write_text("const _ = require('lodash');\nmodule.exports = _.noop;\n")
+    return tmp_path

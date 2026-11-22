@@ -1,5 +1,7 @@
-# PRScope backend runtime dependencies.
-# All licenses are permissive (MIT / BSD / Apache-2.0) — see THIRD_PARTY_NOTICES.md.
-fastapi==0.118.0        # MIT
-uvicorn[standard]==0.37.0  # BSD-3-Clause
-pydantic==2.11.0        # MIT
+# DepLens backend runtime dependencies.
+# All licenses are MIT / BSD / Apache-2.0 (OSI-approved, MIT-compatible).
+fastapi==0.115.6        # MIT
+uvicorn[standard]==0.32.1  # BSD-3-Clause
+pydantic==2.10.4        # MIT
+httpx==0.28.1           # BSD-3-Clause
+networkx==3.2.1         # BSD-3-Clause

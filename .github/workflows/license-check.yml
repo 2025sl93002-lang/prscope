@@ -1,0 +1,58 @@
+# Audits the licenses of DepLens's dependencies to enforce the project's
+# permissive-license policy (see docs/license-policy.md). Copyleft licenses
+# (GPL / AGPL / LGPL) fail the build so they cannot enter the dependency tree
+# unnoticed. pip-licenses is MIT; license-checker is BSD.
+name: License Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-licenses:
+    name: Python dependency licenses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend dependencies into a venv
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r backend/requirements.txt
+          .venv/bin/pip install pip-licenses
+
+      - name: Audit licenses (fail on copyleft)
+        run: |
+          .venv/bin/pip-licenses --format=markdown --fail-on='GPL;AGPL;LGPL'
+
+  node-licenses:
+    name: Node dependency licenses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install frontend production dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: Audit licenses (allow-list only)
+        working-directory: frontend
+        run: >
+          npx license-checker --production
+          --onlyAllow
+          'MIT;ISC;BSD-2-Clause;BSD-3-Clause;Apache-2.0;0BSD;CC0-1.0;Unlicense'

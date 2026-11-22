@@ -1,38 +1,29 @@
-# Pull Request
-
 ## Summary
 
-Briefly describe what this PR changes and why. Link any related issues (e.g. `Closes #123`).
+<!-- Briefly describe what this pull request changes and why. -->
+
+## Related issue
+
+<!-- Link the issue this PR addresses, e.g. "Closes #123". -->
 
 ## Type of change
 
-Please check all that apply:
-
 - [ ] Bug fix (non-breaking change that fixes an issue)
 - [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that changes existing behavior)
-- [ ] Documentation only
-- [ ] Refactor / internal change (no functional change)
-- [ ] Build, CI, or tooling change
+- [ ] Breaking change (fix or feature that would change existing behavior)
+- [ ] Documentation update
+- [ ] Refactor / internal change (no user-facing behavior change)
+- [ ] Other (please describe)
 
 ## How tested
 
-Describe how you verified this change. Include the commands you ran and their results.
-
-- Backend tests: `cd backend && PYTHONPATH=. pytest`
-- Backend lint: `cd backend && ruff check .`
-- Frontend tests: `cd frontend && npm test`
-- Frontend build: `cd frontend && npm run build`
-- Manual verification (describe steps, e.g. ran `POST /api/demo/setup` and checked the Evidence Ledger):
-
-```
-<paste relevant output here>
-```
+<!-- Describe how you verified your change. Include commands run and
+     relevant environment details (OS, Python version, Node version). -->
 
 ## Checklist
 
-- [ ] Tests pass (`PYTHONPATH=. pytest` for the backend; `npm test` for the frontend)
-- [ ] Lint is clean (`ruff check .`)
-- [ ] Documentation updated (README and relevant files under `docs/`, if behavior or usage changed)
-- [ ] No secrets, credentials, or private repository contents committed
-- [ ] Verification evidence for this change is provided above (test results, CI output, or manual-check notes that let a reviewer confirm the change does what it claims)
+- [ ] Tests pass locally (`pytest` in backend, `npm test` in frontend)
+- [ ] Lint passes (Ruff for Python, ESLint + Prettier for TypeScript)
+- [ ] Documentation updated where needed
+- [ ] Any new dependencies are MIT/BSD/Apache-2.0/ISC compatible and documented
+- [ ] Commits follow Conventional Commits
